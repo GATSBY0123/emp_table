@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dw.emp.mapper.EmpMapper">
+
+	<select id="selectEmpByDeptno" resultType="EmpVO">
+		SELECT
+			empno,
+			ename,
+			sal,
+			comm,
+			deptno
+		FROM emp
+		WHERE deptno = #{deptno}
+	</select>
+	
+	<select id="selectEmp" resultType="map">
+		SELECT
+			e.empno,
+			e.ename,
+			e.job,
+			e.sal,
+			e.hiredate,
+			d.dname
+		FROM EMP AS e
+		LEFT JOIN dept AS d
+		ON e.deptno = d.deptno
+		WHERE e.is_use = true
+		ORDER BY e.empno
+	</select>
+
+	<update id="updateEmpComm">
+		UPDATE emp
+		SET comm = sal * 0.1 
+		WHERE deptno = #{deptno}
+	</update>
+	
+	<delete id="deleteEmp">
+		DELETE
+		FROM emp
+		WHERE empno = #{empno}
+	</delete>
+	
+	<select id="selectEmpStatistics" resultType="map">
+		SELECT
+			COUNT(empno) AS "empCount",
+			(SELECT ROUND(AVG(sal)) FROM emp) AS "empSalAvg",
+			(SELECT COUNT(deptno) FROM dept) AS "deptCount",
+			(SELECT ROUND(SUM(comm)) FROM emp) AS "empCommSum"
+		FROM emp
+	</select>
+	
+	<!-- 동적 쿼리 작성해보기 -->
+	<insert id="insertEmp">
+		INSERT INTO emp
+		(
+			empno
+			,is_use
+			<if test="ename != null">
+				,ename
+			</if>
+			<if test="job != null">
+				,job
+			</if>
+			<if test="sal != 0">
+				,sal
+			</if>
+			<if test="comm != 0">
+				,comm
+			</if>
+			<if test="deptno != 0">
+				,deptno
+			</if>
+			,hiredate
+		)
+		VALUES
+		(
+			#{empno}
+			,true
+			<if test="ename != null">
+				,#{ename}
+			</if>
+			<if test="job != null">
+				,#{job}
+			</if>
+			<if test="sal != 0">
+				,#{sal}
+			</if>
+			<if test="comm != 0">
+				,#{comm}
+			</if>
+			<if test="deptno != 0">
+				,#{deptno}
+			</if>
+			,NOW()
+		)
+	</insert>
+	
+	<!-- 특정 사원 조회 -->
+	<select id="selectEmpByEmpno" resultType="EmpVO">
+		SELECT
+			empno,
+			ename,
+			job,
+			sal,
+			comm,
+			deptno
+		FROM emp
+		WHERE empno = #{empno}
+	</select>
+	
+	<!-- 특정 사원 정보 수정 -->
+	<update id="updateEmp">
+		UPDATE emp
+		SET
+			ename = #{ename},
+			job = #{job},
+			sal = #{sal},
+			comm = #{comm},
+			deptno = #{deptno}
+		WHERE empno = #{empno}
+	</update>
+	
+	<!-- 특정 회원 탈퇴(삭제) -->
+	<update id="fireEmp">
+		UPDATE emp
+		SET
+			is_use = false
+		WHERE empno = #{empno}
+	</update>
+	
+	<!-- 이미 가입된 사원인지 여부 체크하는 쿼리 -->
+	<select id="selectCountByEmpno" resultType="Integer">
+		SELECT 
+			count(*)
+		FROM emp
+		WHERE empno = #{empno}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
